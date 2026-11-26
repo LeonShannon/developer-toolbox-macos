@@ -259,14 +259,23 @@ final class ProcessRunner {
             }
         }
         if confirmsLocalization, !isErrorStream, confirmationInput != nil,
-           lines.contains("等待确认安装汉化补丁") {
+           let prompt = lines.first(where: { $0 == "等待确认安装汉化补丁" || $0 == "等待确认更新客户端" }) {
+            let isUpdate = prompt == "等待确认更新客户端"
             let alert = NSAlert()
             alert.alertStyle = .warning
-            alert.messageText = "安装 Antigravity 汉化补丁？"
-            alert.informativeText = "替换 app.asar 会使 Google 原始代码签名校验失败，macOS 可能阻止启动。可用工具箱保存的原版备份或 Google 官方完整安装包恢复。请先保存工作，确认后会关闭并重启 Antigravity。"
-            alert.addButton(withTitle: "取消")
-            alert.addButton(withTitle: "确认安装")
-            finishConfirmation(alert.runModal() == .alertSecondButtonReturn ? "确认安装" : nil)
+            if isUpdate {
+                alert.messageText = "更新 Antigravity 并重新打补丁？"
+                alert.informativeText = "将把 /Applications/Antigravity.app 替换为官方最新版，并重新应用授权补丁。补丁会使客户端签名变为 ad-hoc，内置自动更新从此不可用，后续升级请继续使用本功能。旧版本会保留在应用支持目录，便于回滚。请先保存工作，确认后会关闭 Antigravity。"
+                alert.addButton(withTitle: "取消")
+                alert.addButton(withTitle: "确认更新")
+                finishConfirmation(alert.runModal() == .alertSecondButtonReturn ? "确认更新" : nil)
+            } else {
+                alert.messageText = "安装 Antigravity 汉化补丁？"
+                alert.informativeText = "替换 app.asar 会使 Google 原始代码签名校验失败，macOS 可能阻止启动。可用工具箱保存的原版备份或 Google 官方完整安装包恢复。请先保存工作，确认后会关闭并重启 Antigravity。"
+                alert.addButton(withTitle: "取消")
+                alert.addButton(withTitle: "确认安装")
+                finishConfirmation(alert.runModal() == .alertSecondButtonReturn ? "确认安装" : nil)
+            }
         } else if needsConfirmation, text.contains("输入 CLEAN 移到废纸篓") {
             confirmationRow.isHidden = false
             confirmationField.window?.makeFirstResponder(confirmationField)

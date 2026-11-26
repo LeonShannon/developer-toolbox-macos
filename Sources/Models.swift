@@ -113,7 +113,7 @@ enum Page: Int, CaseIterable {
         case .cleanup: "清理构建产物"
         case .upload: "上传符号"
         case .settings: "设置"
-        case .localize: "一键汉化"
+        case .localize: "Antigravity"
         }
     }
 
@@ -125,7 +125,7 @@ enum Page: Int, CaseIterable {
         case .cleanup: "释放磁盘空间，移动前会先列出清单等待确认。"
         case .upload: "把混淆 mapping 上传到 Bugly，便于还原崩溃堆栈。"
         case .settings: "开发工具箱的偏好设置。"
-        case .localize: "按本机 Antigravity 版本检查、下载和安装中文补丁。"
+        case .localize: "更新客户端版本、应用授权补丁，或安装社区中文补丁。"
         }
     }
 

@@ -408,6 +408,7 @@ final class Toolbox: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMenuIt
         case .upload:
             stack.addFullWidth(makeUploadCard())
         case .localize:
+            stack.addFullWidth(makeAntigravityUpdateCard())
             stack.addFullWidth(makeLocalizationCard())
         case .settings:
             stack.addFullWidth(makeSettingsLoginCard())
@@ -585,8 +586,40 @@ final class Toolbox: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMenuIt
         return card
     }
 
+    private func makeAntigravityUpdateCard() -> Card {
+        let card = Card()
+        card.addFullWidth(UI.cardHeader(
+            symbol: "arrow.triangle.2.circlepath", tint: .systemPurple, title: "版本更新",
+            detail: "更新到官方最新版并重新应用授权补丁。"
+        ))
+        let check = ActionButton("检查更新", symbol: "magnifyingglass") { [weak self] in
+            self?.runAntigravityUpdate("--check", name: "检查 Antigravity 更新")
+        }
+        let update = ActionButton("更新并打补丁", symbol: "arrow.down.circle.fill", style: .prominent) { [weak self] in
+            self?.runAntigravityUpdate("--update", name: "更新 Antigravity 并打补丁")
+        }
+        card.addFullWidth(UI.hstack([check, update], spacing: 8))
+        card.addFullWidth(UI.note("替换后客户端签名为 ad-hoc，内置自动更新将不可用；后续升级请继续使用本功能。"))
+        return card
+    }
+
+    private func runAntigravityUpdate(_ argument: String, name: String) {
+        let script = scriptsDirectory.appendingPathComponent("Antigravity 更新.command")
+        guard FileManager.default.isExecutableFile(atPath: script.path) else {
+            showAlert("无法运行 Antigravity 更新", "请确认脚本存在且可执行。\n\(script.path)")
+            return
+        }
+        let isUpdate = argument == "--update"
+        runner.run(script, arguments: [argument], name: name, workingDirectory: scriptsDirectory,
+                   needsConfirmation: isUpdate, confirmsLocalization: isUpdate)
+    }
+
     private func makeLocalizationCard() -> Card {
         let card = Card()
+        card.addFullWidth(UI.cardHeader(
+            symbol: "character.book.closed", tint: .systemTeal, title: "中文补丁",
+            detail: "按本机版本下载并安装社区汉化补丁。"
+        ))
         let download = ActionButton("下载或更新补丁", symbol: "arrow.down.circle") { [weak self] in
             self?.runLocalization("--download", name: "下载或更新汉化补丁")
         }
