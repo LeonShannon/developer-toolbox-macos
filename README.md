@@ -30,6 +30,7 @@
 - **发布与效率杂活**
   - **上传符号**：按版本上传 Bugly Mapping 文件。
   - **一键汉化**：为匹配版本的 Antigravity 安装社区中文补丁。
+  - **Antigravity 版本更新**：查询官方最新版本并升级客户端，更新后自动重打补丁。补丁会改变客户端代码签名，内置自动更新因此不可用，后续升级请继续使用该功能。
 
 ---
 
@@ -130,7 +131,23 @@ chmod 600 bugly.local.sh
 在 `bugly.local.sh` 中填入你自己的 Bugly App ID、App Key、包名以及上传工具 JAR 的绝对路径，`INPUT_MAPPING` 可设为默认 Mapping 路径。上传脚本会通过命令行参数将密钥传给 Bugly JAR。
 
 > [!TIP]
-> `toolbox.local.plist`、`bugly.local.sh` 以及编译生成的二进制文件均已写入 `.gitignore`，不会意外提交到仓库。
+> `toolbox.local.plist`、`bugly.local.sh`、`antigravity.local.sh` 以及编译生成的二进制文件均已写入 `.gitignore`，不会意外提交到仓库。
+
+---
+
+## 配置 Antigravity 版本更新
+
+「Antigravity」页的版本更新与打补丁依赖外部补丁器（GPL-3.0 项目，未并入本仓库，仅以独立进程调用）：
+
+```sh
+cp -n antigravity.example.sh antigravity.local.sh
+chmod 600 antigravity.local.sh
+```
+
+在 `antigravity.local.sh` 中把 `TOOLBOX_ANTIGRAVITY_PATCHER` 指向补丁器的 `source` 目录（该目录需包含可用的 `.venv`）。未配置时该功能会直接提示，不影响其它功能。
+
+> [!NOTE]
+> 补丁会替换客户端的代码签名，因此客户端内置自动更新将不可用；后续升级请继续使用本页功能。旧版本会保留在 `~/Library/Application Support/开发工具箱/Antigravity/` 便于回滚。
 
 ---
 
@@ -143,6 +160,7 @@ chmod 600 bugly.local.sh
 ├── build.sh                     # 编译、本地签名与自检脚本
 ├── toolbox.example.plist        # 项目配置模板（复制为 toolbox.local.plist 使用）
 ├── bugly.example.sh             # Bugly 上传配置模板（复制为 bugly.local.sh 使用）
+├── antigravity.example.sh       # Antigravity 补丁器路径模板（复制为 antigravity.local.sh 使用）
 ├── toolbox-config.sh            # 供脚本读取配置的公共逻辑
 ├── *.command                    # 各功能对应的底层执行脚本（也可在终端/Finder 单独运行）
 └── docs/images/                 # README 截图资源

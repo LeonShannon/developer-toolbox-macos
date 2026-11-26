@@ -30,6 +30,7 @@ A lightweight macOS menu bar & desktop utility for Android and HarmonyOS develop
 - **Release & Productivity Utilities**
   - **Symbol Upload**: Upload Bugly mapping files by app version.
   - **One-Click Localization**: Install the community Chinese patch for matching Antigravity versions.
+  - **Antigravity Update**: Query the latest official build, upgrade the client, and re-apply the patch. The patch changes the code signature, so the built-in auto-updater stops working—use this feature for later upgrades.
 
 ---
 
@@ -130,7 +131,23 @@ chmod 600 bugly.local.sh
 Fill in your Bugly App ID, App Key, package name, and the absolute path to the Bugly upload JAR in `bugly.local.sh`. `INPUT_MAPPING` can point to your default mapping path.
 
 > [!TIP]
-> `toolbox.local.plist`, `bugly.local.sh`, and compiled binaries are already listed in `.gitignore`.
+> `toolbox.local.plist`, `bugly.local.sh`, `antigravity.local.sh`, and compiled binaries are already listed in `.gitignore`.
+
+---
+
+## Antigravity Update Setup
+
+The update and re-patch flow on the **Antigravity** page depends on an external patcher (a GPL-3.0 project that is *not* bundled here; it is only invoked as a separate process):
+
+```sh
+cp -n antigravity.example.sh antigravity.local.sh
+chmod 600 antigravity.local.sh
+```
+
+Point `TOOLBOX_ANTIGRAVITY_PATCHER` in `antigravity.local.sh` at the patcher's `source` directory (it must contain a working `.venv`). When it is missing, the feature reports the problem and leaves everything else untouched.
+
+> [!NOTE]
+> The patch replaces the client's code signature, so the built-in auto-updater stops working; use this page for later upgrades. The previous build is kept in `~/Library/Application Support/开发工具箱/Antigravity/` for rollback.
 
 ---
 
@@ -143,6 +160,7 @@ Fill in your Bugly App ID, App Key, package name, and the absolute path to the B
 ├── build.sh                     # Build, ad-hoc codesign, and self-check script
 ├── toolbox.example.plist        # Project config template (copy to toolbox.local.plist)
 ├── bugly.example.sh             # Bugly config template (copy to bugly.local.sh)
+├── antigravity.example.sh       # Patcher path template (copy to antigravity.local.sh)
 ├── toolbox-config.sh            # Shared config loader for shell scripts
 ├── *.command                    # Underlying task scripts (also runnable standalone)
 └── docs/images/                 # Screenshots referenced by README
