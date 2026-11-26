@@ -1,6 +1,10 @@
 # 开发工具箱
 
-**在 Mac 上打包 Android 和鸿蒙应用、截手机屏、看设备日志。** 在菜单栏打开工具箱，选好设备和 Debug 或 Release，就能在一个窗口里完成打包、安装和启动。
+**用 Agent 写代码，用工具箱跑真机。**
+
+改完代码，从 Mac 菜单栏选一台 Android 或鸿蒙设备，打包、安装、启动。遇到问题，顺手截屏或按包名查日志。平时只做这些操作，可以关掉 Android Studio 或 DevEco Studio，省下 IDE 常驻占用的内存。
+
+项目仍需安装对应的构建工具和 SDK。打包时，工具箱会调用 Gradle 或 Hvigor。
 
 ![开发工具箱的打包页面，展示 Android 和鸿蒙的 Debug、Release 操作](docs/images/build.png)
 
