@@ -218,6 +218,24 @@ if [[ $need_replace -eq 1 ]]; then
 fi
 
 # ---------- 打补丁 ----------
+# 若当前仍通过 Google 官方签名校验，先为同目录的「一键汉化」备份原版 app.asar，避免打完授权补丁变为 ad-hoc 后无法验证。
+if /usr/bin/codesign --verify --strict \
+    -R='anchor apple generic and identifier "com.google.antigravity" and certificate leaf[subject.OU] = "EQHXZ8M8AV"' \
+    "$app" 2>/dev/null; then
+    asar_src="$app/Contents/Resources/app.asar"
+    asar_ver=$(version_at "$app" || true)
+    if [[ -f "$asar_src" && -n "$asar_ver" ]]; then
+        asar_cache="$store/$asar_ver"
+        /bin/mkdir -p "$asar_cache"
+        if [[ ! -f "$asar_cache/app.asar.bak" || ! -f "$asar_cache/原版.sha256" ]]; then
+            asar_sha=$(/usr/bin/shasum -a 256 "$asar_src" | /usr/bin/awk '{print $1}')
+            /bin/cp -p "$asar_src" "$asar_cache/app.asar.bak.tmp"
+            /bin/mv -f "$asar_cache/app.asar.bak.tmp" "$asar_cache/app.asar.bak"
+            printf '%s\n' "$asar_sha" > "$asar_cache/原版.sha256"
+        fi
+    fi
+fi
+
 # 替换后重新判定：已是补丁态说明本次无需重复写入（补丁器会要求解验证码）
 pre_patch_state=$(patch_state)
 if [[ "$pre_patch_state" == 已打补丁 ]]; then

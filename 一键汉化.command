@@ -81,18 +81,34 @@ fi
 printf '补丁已下载并校验：%s\n' "$patch"
 [[ "$1" == --install ]] || exit 0
 
-# 只有 Google 签名校验通过的客户端才可作为首次备份的来源。
-if /usr/bin/codesign --verify --strict -R='anchor apple generic and identifier "com.google.antigravity" and certificate leaf[subject.OU] = "EQHXZ8M8AV"' "$app" 2>/dev/null; then
+# 优先用 Google 官方签名验证原版；若已先应用授权补丁（ad-hoc 签名），也允许从已知原版备份或当前未汉化客户端建立备份。
+backup_original() {
     /bin/cp -p "$target" "$scratch/app.asar.bak"
     [[ "$(sha "$scratch/app.asar.bak")" == "$current" ]] || fail '原版备份校验失败。'
     /bin/mv -f "$scratch/app.asar.bak" "$backup"
     printf '%s\n' "$current" > "$cache/原版.sha256"
+}
+
+if /usr/bin/codesign --verify --strict -R='anchor apple generic and identifier "com.google.antigravity" and certificate leaf[subject.OU] = "EQHXZ8M8AV"' "$app" 2>/dev/null; then
+    backup_original
+elif [[ -f "$backup" && -f "$cache/原版.sha256" && "$(sha "$backup")" == "$(< "$cache/原版.sha256")" ]] &&
+     { [[ "$current" == "$(< "$cache/原版.sha256")" ]] || [[ -f "$receipt" && "$(< "$receipt")" == "$current" ]]; }; then
+    :
+elif [[ -f "$app/Contents/Resources/bin/language_server.agybak" ]] &&
+     [[ $'\n'"$(/usr/bin/codesign -dvv "$app" 2>&1)"$'\n' == *$'\nSignature=adhoc\n'* ]]; then
+    printf '检测到客户端已应用授权补丁，将当前 app.asar 备份为原版。\n'
+    backup_original
 else
-    [[ -f "$receipt" && "$(< "$receipt")" == "$current" && -f "$backup" &&
-       -f "$cache/原版.sha256" && "$(sha "$backup")" == "$(< "$cache/原版.sha256")" ]] ||
-        fail '当前客户端的原版无法验证。请用 Google 官方完整安装包覆盖安装，再从工具箱应用汉化。'
+    fail '当前客户端的原版无法验证。请用 Google 官方完整安装包覆盖安装，再从工具箱应用汉化。'
 fi
-[[ -w "${target%/*}" ]] || fail '当前用户没有写入 Antigravity 资源目录的权限。'
+if [[ ! -w "${target%/*}" || ! -w "$target" ]]; then
+    printf '客户端文件归属与当前用户不一致，需要一次管理员授权来修正（会弹出系统对话框）…\n'
+    /usr/bin/osascript <<OSA || fail '未获得管理员授权，当前用户没有写入 Antigravity 资源目录的权限。'
+do shell script "/usr/sbin/chown -R $(/usr/bin/id -u) $(printf '%q' "$app")" with administrator privileges
+OSA
+    [[ -w "${target%/*}" && -w "$target" ]] || fail '当前用户没有写入 Antigravity 资源目录的权限。'
+    printf '归属已修正，后续无需再次授权。\n'
+fi
 
 replace_asar() {
     local source=$1 temporary
