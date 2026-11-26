@@ -1,0 +1,5 @@
+JAR_PATH=''
+APP_ID=''
+APP_KEY=''
+BUNDLE_ID=''
+INPUT_MAPPING=''

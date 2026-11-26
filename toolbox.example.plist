@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AndroidProject</key>
+	<string></string>
+	<key>AndroidPackage</key>
+	<string></string>
+	<key>AndroidDebugTask</key>
+	<string>:app:assembleDebug</string>
+	<key>AndroidReleaseTask</key>
+	<string>:app:assembleRelease</string>
+	<key>AndroidChannelTask</key>
+	<string></string>
+	<key>AndroidDebugMetadata</key>
+	<string>app/build/outputs/apk/debug/output-metadata.json</string>
+	<key>AndroidReleaseMetadata</key>
+	<string>app/build/outputs/apk/release/output-metadata.json</string>
+	<key>AndroidMappingDirectory</key>
+	<string>app/build/outputs/mapping</string>
+	<key>AndroidChannelDirectory</key>
+	<string></string>
+	<key>HarmonyProject</key>
+	<string></string>
+	<key>HarmonyPackage</key>
+	<string></string>
+	<key>HarmonyAbility</key>
+	<string>MainAbility</string>
+	<key>HarmonyModule</key>
+	<string>entry@default</string>
+	<key>HarmonyDebugProduct</key>
+	<string>default</string>
+	<key>HarmonyReleaseProduct</key>
+	<string>default</string>
+	<key>HarmonyDebugHap</key>
+	<string></string>
+	<key>HarmonyReleaseHap</key>
+	<string></string>
+	<key>ExtraProject</key>
+	<string></string>
+	<key>AndroidCleanupDirectories</key>
+	<array/>
+	<key>HarmonyCleanupDirectories</key>
+	<array/>
+	<key>ExtraCleanupDirectories</key>
+	<array/>
+	<key>AndroidHistoryDirectories</key>
+	<array>
+		<string>app/build/outputs/apk</string>
+		<string>app/build/outputs/bundle</string>
+		<string>app/build/outputs/mapping</string>
+	</array>
+	<key>HarmonyHistoryDirectories</key>
+	<array/>
+	<key>ExtraHistoryDirectories</key>
+	<array/>
+</dict>
+</plist>
